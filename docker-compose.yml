@@ -1,0 +1,75 @@
+version: '2'
+
+services:
+    db:
+        hostname: mfs_db
+        image: mariadb
+        container_name: mfs_db
+        restart: on-failure:3
+        volumes:
+            - ./mysql/db:/var/lib/mysql
+        command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+        environment:
+            - MYSQL_ROOT_PASSWORD=
+            - MYSQL_PASSWORD=
+            - MYSQL_DATABASE=nextcloud
+            - MYSQL_USER=nextcloud
+
+    app:
+        hostname: mfs_app
+        container_name: mfs_app
+        image: nextcloud:fpm
+        links:
+            - db
+        restart: on-failure:3
+        volumes:
+            - ./nginx/nextcloud:/var/www/html
+            - /etc/ssl/nas.crt:/etc/ssl/nas.crt
+            - /etc/ssl/nas.key:/etc/ssl/nas.key
+            - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+            - ./sources.list:/etc/apt/sources.list
+            - ./redis/5.3.2.zip:/root/5.3.2.zip
+        environment:
+            - MYSQL_ROOT_PASSWORD=
+            - MYSQL_PASSWORD=
+            - MYSQL_DATABASE=nextcloud
+            - MYSQL_USER=nextcloud_PASSWORD=j7ba7f2fMcBanJou
+
+    web:
+        hostname: mfs_nginx
+        container_name: mfs_nginx
+        image: nginx
+        restart: on-failure:3
+        ports:
+            - 33014:443
+            - 33014:443/udp
+        links:
+            - app
+        volumes:
+            - ./nginx/conf/default.conf:/etc/nginx/conf.d/default.conf:ro
+            - ./sources.list:/etc/apt/sources.list
+        volumes_from:
+            - app
+
+    redis:
+        hostname: mfs_redis
+        container_name: mfs_redis
+        image: redis
+        restart: on-failure:3
+        volumes:
+            - ./redis/redis.conf:/etc/redis.conf:ro
+            - ./redis/data:/data
+        command: /usr/local/etc/redis/redis.conf
+
+# apt install net-tools # ifconfig
+# apt install iputils-ping # ping
+# ----------------------------------------
+# docker exec -it mfs_app /bin/bash
+# docker-php-source extract
+# chmod 777 /var/www/html
+# chown www-data:www-data /var/www/html
+# apt update && apt install imagemagick unzip -y
+# docker-php-ext-install mysqli
+# cd /root && unzip 5.3.2.zip
+# mv phpredis-5.3.2/ /usr/src/php/ext/phpredis
+# 记得去redis/redis.conf修改密码 requirepass
