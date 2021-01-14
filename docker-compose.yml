@@ -7,13 +7,18 @@ services:
         container_name: mfs_db
         restart: on-failure:3
         volumes:
-            - ./mysql/db:/var/lib/mysql
+            - ./db:/var/lib/mysql
         command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
         environment:
             - MYSQL_ROOT_PASSWORD=
             - MYSQL_PASSWORD=
             - MYSQL_DATABASE=nextcloud
             - MYSQL_USER=nextcloud
+        # 记得把 db 里面的txt删了
+        # ports:
+        #     - 33096:3306
+        #     - 33096:3306/udp
+        # 方便用来调试，当然你也可以命令行
 
     app:
         hostname: mfs_app
@@ -26,9 +31,12 @@ services:
             - ./nginx/nextcloud:/var/www/html
             - /etc/ssl/nas.crt:/etc/ssl/nas.crt
             - /etc/ssl/nas.key:/etc/ssl/nas.key
-            - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+            # 证书你得自己配置
+            - ./php/php.ini:/usr/local/etc/php/conf.d/php.ini
             - ./sources.list:/etc/apt/sources.list
             - ./redis/5.3.2.zip:/root/5.3.2.zip
+            # 这个我在crontab里面设置了东西，需要自行修改
+            - ./app/entrypoint.sh:/entrypoint.sh
         environment:
             - MYSQL_ROOT_PASSWORD=
             - MYSQL_PASSWORD=
@@ -48,6 +56,7 @@ services:
         volumes:
             - ./nginx/conf/default.conf:/etc/nginx/conf.d/default.conf:ro
             - ./sources.list:/etc/apt/sources.list
+            # 记得把nextcloud里面的txt删了
         volumes_from:
             - app
 
