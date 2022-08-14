@@ -1,8 +1,8 @@
 # Docker 部署 Nextcloud LADP 四件套
 
-Blog：[Docker 部署 Nextcloud LADP 四件套](https://blog.zygd.site/Docker%20%E9%83%A8%E7%BD%B2%20Nextcloud%20LADP%20%E5%9B%9B%E4%BB%B6%E5%A5%97.html#Dockerfile)
+Blog：[Docker 部署 Nextcloud LADP 四件套](https://xrsec.vercel.app/Docker%20%E9%83%A8%E7%BD%B2%20Nextcloud%20LADP%20%E5%9B%9B%E4%BB%B6%E5%A5%97.html#Dockerfile)
 
-## Dockerfile 
+## Dockerfile
 
 ```dockerfile
 version: '2'
@@ -86,7 +86,7 @@ services:
 
 
 
-## Nginx 
+## Nginx
 
 这个可以借鉴一下官方的
 
@@ -261,7 +261,7 @@ server {
 
 
 
-## Redis 
+## Redis
 
 ```conf
 requirepass 你的密码
@@ -300,7 +300,7 @@ max_execution_time = 600
 
 ## 简单介绍
 
-·# # 大家好 
+·# # 大家好
 
 😅
 
